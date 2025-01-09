@@ -1,39 +1,16 @@
-/**
- * This Alloy model represents a labeled transition system (LTS) comprising states, 
- * initial states, and events. Transitions between states are labeled by events. 
- * The model includes predicates for various LTS properties such as determinism, reachability, 
- * and reversibility.
- **/
-
-/* States with transitions labeled by events. */
 sig State {
-        trans : Event -> State
+    trans : Event -> State
 }
 
-/* Initial states. */
 sig Init in State {}
 
-/* Events that label transitions between states. */
 sig Event {}
 
-/* The LTS does not contain deadlocks, i.e., each state has at least one transition. */
-pred inv1 {}
+pred inv1 {}   // The LTS does not contain deadlocks, i.e., each state has at least one transition.
+pred inv2 {}   // There is a single initial state.
+pred inv3 {}   // The LTS is deterministic, i.e., each state has at most one transition for each event.
+pred inv4 {}   // All states are reachable from an initial state.
+pred inv5 {}   // All states have the same events available.
+pred inv6 {}   // Each event is available in at least one state.
+pred inv7 {}   // The LTS is reversible, i.e., from a reachable state it is always possible to return to an initial state.
 
-/* There is a single initial state. */
-pred inv2 {}
-
-/* The LTS is deterministic, i.e., each state has at most one transition for each event. */
-pred inv3 {}
-
-/* All states are reachable from an initial state. */
-pred inv4 {}
-
-/* All states have the same events available. */
-pred inv5 {}
-
-/* Each event is available in at least one state. */
-pred inv6 {}
-
-/* The LTS is reversible, i.e., from a reachable state it is always possible 
-to return to an initial state. */
-pred inv7 {}
