@@ -1,0 +1,113 @@
+/**
+ * This Alloy model uses Electrum's temporal logic to represent a file system trash can,
+ * incorporating both unary and binary temporal operators for reasoning about file states over time.
+ **/
+
+var sig File {
+    var link : lone File
+}
+
+var sig Trash in File {}
+
+var sig Protected in File {}
+
+/* Initially, the trash is empty and there are no protected files. */
+pred prop1 {
+    no Trash
+    no Protected
+}
+
+/* Initially, there are no files, but some are immediately created. */
+pred prop2 {
+    no File => some f: File
+}
+
+/* There is always some file in the system. */
+pred prop3 {
+    always (some f: File)
+}
+
+/* Some file will eventually be sent to the trash. */
+pred prop4 {
+    eventually (some f: Trash)
+}
+
+/* Some file will eventually be deleted. */
+pred prop5 {
+    eventually (no f: File | f not in Trash)
+}
+
+/* Whenever a file is sent to the trash, it remains in there forever. */
+pred prop6 {
+    always (some f: Trash => f in Trash)
+}
+
+/* Some file will be protected. */
+pred prop7 {
+    eventually (some f: Protected)
+}
+
+/* Whenever a link exists, it will eventually be in the trash. */
+pred prop8 {
+    always (some f: File | f.link != none => eventually (f in Trash))
+}
+
+/* A protected file is at no time sent to the trash. */
+pred prop9 {
+    always (no f: Protected | f in Trash)
+}
+
+/* The protected status never changes. */
+pred prop10 {
+    always (some f: File | f in Protected => f in Protected)
+}
+
+/* Every unprotected file becomes protected in the succeeding state. */
+pred prop11 {
+    always (no f: File | f not in Protected => eventually (f in Protected))
+}
+
+/* A file will eventually be sent to the trash and remain there indefinitely. */
+pred prop12 {
+    eventually (some f: Trash => always (f in Trash))
+}
+
+/* If a file is ever in the trash, it was once outside. */
+pred prop13 {
+    always (some f: Trash => eventually (f not in Trash))
+}
+
+/* Whenever a protected file is in the trash, in the succeeding state it no longer is protected. */
+pred prop14 {
+    always (some f: Trash & f in Protected => eventually (f not in Protected))
+}
+
+/* Anytime a file exists, it will eventually be sent to the trash. */
+pred prop15 {
+    always (some f: File => eventually (f in Trash))
+}
+
+/* If a file is protected, it has always been so. */
+pred prop16 {
+    always (some f: File | f in Protected => always (f in Protected))
+}
+
+/* When a file is sent to the trash, it is deleted in the succeeding state. */
+pred prop17 {
+    always (some f: Trash => eventually (no f: File | f not in Trash))
+}
+
+/* Protected files will only be deprotected if sent to the trash. */
+pred prop18 {
+    always (some f: Protected => eventually (f in Trash => f not in Protected))
+}
+
+/* All protected files will be sent to the trash but remain protected until then. */
+pred prop19 {
+    always (some f: Protected => eventually (f in Trash) && always (f in Protected until f in Trash))
+}
+
+/* Whenever a file is in the trash, it has been so since it was deprotected. */
+pred prop20 {
+    always (some f: Trash => eventually (f not in Protected until f in Trash))
+}
