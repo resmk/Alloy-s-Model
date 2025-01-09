@@ -1,0 +1,106 @@
+/**
+ * First-order logic revision exercises based on a simple model of a 
+ * classroom management system.
+ * 
+ * The model includes five unary predicates (sets): Person, Student, Teacher,
+ * Group, and Class, where Student and Teacher are subsets of Person. 
+ * It also defines two binary predicates (Tutors and Teaches) and a ternary 
+ * predicate (Groups) to capture relationships between persons, groups, 
+ * and classes. 
+ * 
+ * This Alloy model establishes invariants (predicates) to define constraints 
+ * and rules for classroom management, ensuring logical consistency and 
+ * capturing essential relationships among entities.
+*
+*This version adds explanations to clarify the relationships and constraints described in the predicates.
+ **/
+
+sig Person {
+    Tutors : set Person,  // A person tutors other persons
+    Teaches : set Class   // A person teaches specific classes
+}
+
+sig Group {}  // Represents a group
+
+sig Class {
+    Groups : Person -> Group  // Represents assignments of persons to groups within a class
+}
+
+sig Teacher in Person {}  // Teachers are a subset of persons
+sig Student in Person {}  // Students are a subset of persons
+
+/* Every person is a student. */
+pred inv1 {
+    all p: Person | p in Student
+}
+
+/* There are no teachers. */
+pred inv2 {
+    no Teacher
+}
+
+/* No person is both a student and a teacher. */
+pred inv3 {
+    no p: Person | p in Student and p in Teacher
+}
+
+/* No person is neither a student nor a teacher. */
+pred inv4 {
+    all p: Person | p in Student or p in Teacher
+}
+
+/* There are classes assigned to teachers. */
+pred inv5 {
+    some t: Teacher | some t.Teaches
+}
+
+/* Every teacher has classes assigned. */
+pred inv6 {
+    all t: Teacher | some t.Teaches
+}
+
+/* Every class has teachers assigned. */
+pred inv7 {
+    all c: Class | some t: Teacher | c in t.Teaches
+}
+
+/* Teachers are assigned at most one class. */
+pred inv8 {
+    all t: Teacher | lone t.Teaches
+}
+
+/* No class has more than one teacher assigned. */
+pred inv9 {
+    all c: Class | lone t: Teacher | c in t.Teaches
+}
+
+/* For every class, every student has a group assigned. */
+pred inv10 {
+    all c: Class | all s: Student | some g: Group | s->g in c.Groups
+}
+
+/* A class only has groups if it has a teacher assigned. */
+pred inv11 {
+    all c: Class | some g: Group | some t: Teacher | c in t.Teaches implies some c.Groups
+}
+
+/* Each teacher is responsible for some groups. */
+pred inv12 {
+    all t: Teacher | some g: Group | some c: Class | c in t.Teaches and some p: Person | p->g in c.Groups
+}
+
+/* Only teachers tutor, and only students are tutored. */
+pred inv13 {
+    all p: Person | p.Tutors in Teacher and p not in Student
+}
+
+/* Every student in a class is at least tutored by the teachers assigned to that class. */
+pred inv14 {
+    all c: Class, s: Student | s->g in c.Groups implies some t: Teacher | c in t.Teaches and t->s in Tutors
+}
+
+/* Assuming a universe of 3 persons, the tutoring chain of every 
+ * person eventually reaches a Teacher. */
+pred inv15 {
+    all p: Person | eventually (some t: Teacher | t in p.Tutors)
+}
