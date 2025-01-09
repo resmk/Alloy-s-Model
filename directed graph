@@ -1,35 +1,19 @@
-/**
- * This Alloy model represents a directed graph where nodes have outgoing edges. 
- * The graph can be analyzed for various properties such as being undirected, 
- * oriented, acyclic, complete, loop-free, weakly connected, strongly connected, 
- * and transitive. The predicates capture these graph properties using relational logic.
- **/
-
-/* Each node as a set of outgoing edges, representing a directed graph without multiple edges. */
 sig Node {
-	adj : set Node
+    adj : set Node
 }
 
-/* The graph is undirected, i.e., edges are symmetric. */
-pred undirected {}
+pred undirected {}   // No outgoing edges are symmetric
 
-/* The graph is oriented, i.e., contains no symmetric edges. */
-pred oriented {}
+pred oriented {}     // No symmetric edges
 
-/* The graph is acyclic, i.e., contains no directed cycles. */
-pred acyclic {}
+pred acyclic {}      // No directed cycles
 
-/* The graph is complete, i.e., every node is connected to every other node. */
-pred complete {}
+pred complete {}     // Every node is connected to every other node
 
-/* The graph contains no loops, i.e., nodes have no transitions to themselves. */
-pred noLoops {}
+pred noLoops {}      // No self-loop edges
 
-/* The graph is weakly connected, i.e., it is possible to reach every node from every node ignoring edge direction. */
-pred weaklyConnected {}
+pred weaklyConnected {}   // Reachable from any node ignoring edge direction
 
-/* The graph is strongly connected, i.e., it is possible to reach every node from every node considering edge direction. */
-pred stronglyConnected {}
+pred stronglyConnected {}  // Reachable from any node considering edge direction
 
-/* The graph is transitive, i.e., if two nodes are connected through a third node, they also are connected directly. */
-pred transitive {}
+pred transitive {}   // If two nodes are connected through a third, they are directly connected
