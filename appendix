@@ -1,5 +1,3 @@
-module appendixA/addressBook2
-
 sig Addr, Name { }
 
 sig Book {
